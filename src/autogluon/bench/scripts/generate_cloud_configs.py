@@ -49,6 +49,10 @@ def generate_cloud_config(
         help="Framework name",
     ),
     constraint: str = typer.Option("test", help="Resource constraint for '--module multimodal'"),
+    fewshot: bool = typer.Option(False, help="Resource constraint for '--module multimodal'"),
+    shot: int = typer.Option(0, help="Resource constraint for '--module multimodal'"),
+    lang: str = typer.Option("", help="Resource constraint for '--module multimodal'"),
+    seed: int = typer.Option(0, help="Resource constraint for '--module multimodal'"),
     amlb_constraint: str = typer.Option(
         "",
         help="AMLB Constraints for tabular or timeseries, in the format 'test,1h4c,...'. Refer to https://github.com/openml/automlbenchmark/blob/master/resources/constraints.yaml for details.",
@@ -115,6 +119,12 @@ def generate_cloud_config(
                 k, v = item.split(":")
                 custom_dataloader_dict[k] = v
             module_configs["custom_dataloader"] = custom_dataloader_dict
+            if fewshot:
+                module_configs["custom_dataloader"]["fewshot"] = fewshot
+                module_configs["custom_dataloader"]["lang"] = lang
+                module_configs["custom_dataloader"]["shot"] = shot
+                module_configs["custom_dataloader"]["seed"] = seed
+
 
         config.update(module_configs)
 
