@@ -49,10 +49,10 @@ def generate_cloud_config(
         help="Framework name",
     ),
     constraint: str = typer.Option("test", help="Resource constraint for '--module multimodal'"),
-    fewshot: bool = typer.Option(False, help="Resource constraint for '--module multimodal'"),
-    shot: int = typer.Option(0, help="Resource constraint for '--module multimodal'"),
-    lang: str = typer.Option("", help="Resource constraint for '--module multimodal'"),
-    seed: int = typer.Option(0, help="Resource constraint for '--module multimodal'"),
+    fewshot: bool = typer.Option(False, help="Flag to enable/disable fewshot learning for '--module multimodal'"),
+    shot: int = typer.Option(0, help="Number of shots if fewshot learning is enabled '--module multimodal'"),
+    lang: str = typer.Option("", help="Language for datasets '--module multimodal text datasets'"),
+    seed: int = typer.Option(0, help="Seed value '--module multimodal'"),
     amlb_constraint: str = typer.Option(
         "",
         help="AMLB Constraints for tabular or timeseries, in the format 'test,1h4c,...'. Refer to https://github.com/openml/automlbenchmark/blob/master/resources/constraints.yaml for details.",
@@ -171,3 +171,9 @@ def generate_cloud_config(
         yaml.dump(config, f)
 
     typer.echo(f"Config file '{output_file}' generated successfully.")
+
+
+def enable_shot_if_fewshot_enabled(value, option):
+    if option.context.params.get("fewshot") and value == 0:
+        raise typer.BadParameter("The --shot option is only available when --fewshot is True")
+    return value
