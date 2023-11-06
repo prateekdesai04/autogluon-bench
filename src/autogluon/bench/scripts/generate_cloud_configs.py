@@ -131,6 +131,7 @@ def generate_cloud_config(
                 module_configs["custom_dataloader"]["seed"] = seed
         
         if custom_metrics:
+            module_configs["custom_metrics"] = {}
             module_configs["custom_metrics"]["metrics_path"] = metrics_path
             module_configs["custom_metrics"]["function_name"] = function_name
             module_configs["custom_metrics"]["optimum"] = optimum
