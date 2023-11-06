@@ -73,6 +73,11 @@ def generate_cloud_config(
         None,
         help="Custom config directory.",
     ),
+    custom_metrics: bool = typer.Option(False, help="Flag to enable/disable custom_metrics for '--module multimodal'"),
+    metrics_path: str = typer.Option(None, help="Resource constraint for '--module multimodal custom metrics'"),
+    function_name: str = typer.Option(None, help="Resource constraint for '--module multimodal custom metrics'"),
+    optimum: int = typer.Option(0, help="Resource constraint for '--module multimodal custom metrics'"),
+    greater_is_better: bool = typer.Option(False, help="Flag to enable/disable resource constraint for '--module multimodal'")
 ):
     config = {
         "module": module,
@@ -124,6 +129,12 @@ def generate_cloud_config(
                 module_configs["custom_dataloader"]["lang"] = lang
                 module_configs["custom_dataloader"]["shot"] = shot
                 module_configs["custom_dataloader"]["seed"] = seed
+        
+        if custom_metrics:
+            module_configs["custom_metrics"]["metrics_path"] = metrics_path
+            module_configs["custom_metrics"]["function_name"] = function_name
+            module_configs["custom_metrics"]["optimum"] = optimum
+            module_configs["custom_metrics"]["greater_is_better"] = greater_is_better
 
 
         config.update(module_configs)
@@ -173,6 +184,7 @@ def generate_cloud_config(
     typer.echo(f"Config file '{output_file}' generated successfully.")
 
 
+# this is never executed - find a way to return this whenever an argument is not provided
 def enable_shot_if_fewshot_enabled(value, option):
     if option.context.params.get("fewshot") and value == 0:
         raise typer.BadParameter("The --shot option is only available when --fewshot is True")
